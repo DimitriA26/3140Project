@@ -12,20 +12,20 @@
 - [x] Create database and connection module
 - [ ] backend/config/database.js with connection pool
 - [ ] environment variables
-- [ ] Foreign keys, indexes, constraints 
+- [x] Foreign keys, indexes, constraints 
 - [ ] Create seed script 
 - [ ] 8+ products with realistic data
 - [ ] 2-3 test users (customer & admin) 
 - [ ] write schema migration file 
 
 #### Tables: 
-- [ ] **Users** (id, email, password_hash, name, role)
-- [ ] **Products** (id, name, description, price, category, image_url, inventory) 
-- [ ] **Categories** (id, name) 
-- [ ] **Carts** (id, user_id, created_at)
-- [ ] **CartItems** (id, cart_id, product_id, quantity)
-- [ ] **Orders** (id, user_id, total_price, status, created_at) 
-- [ ] **OrderItems** (id, order_id, product_id, quantity, price_at_purchase)
+- [x] **Users** (id, email, password_hash, name, role)
+- [x] **Products** (id, name, description, price, category, image_url, inventory) 
+- [x] **Categories** (id, name) 
+- [x] **Carts** (id, user_id, created_at)
+- [x] **CartItems** (id, cart_id, product_id, quantity)
+- [x] **Orders** (id, user_id, total_price, status, created_at) 
+- [x] **OrderItems** (id, order_id, product_id, quantity, price_at_purchase)
 
 ## Test for Completion
 - [ ] Seed script runs without errors
