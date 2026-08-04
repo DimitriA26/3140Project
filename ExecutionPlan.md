@@ -108,7 +108,7 @@
 - [ ] only authenticated users can view their own orders -> *please sign in to view order/order history*
 
 **Please utilize the recommended branch name**
-## Role: Product Search, Filter & Sort [insert_name]
+## Role: Product Search, Filter & Sort - Muhammad Chaudhry
 **Branch: product-discovery**
 
 ### Backend Tasks 
