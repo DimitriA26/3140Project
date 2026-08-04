@@ -1,5 +1,7 @@
 # Vertical Slice Breakdown for 5 Developers
- - Parallel execution: I set this up for Tier 2. 
+ - Linking the outline Dmitri made [Outline](https://docs.google.com/document/d/1LFvqoC0xGLnw0gpgd8h-Ii8EkUXfOH-Cwk532xo7Dx0/edit?tab=t.0#heading=h.1eggkkgetqh3) -> this breaks it down literally function by function its very granular good to work side by side with. 
+ - Parallel execution: I set this up for Tier 2.
+ - 
  - Please test.
  - Use separate commit branches (as I have put below per person's task) will help us fix one bug at a time.
  - We will all peer review before we push any branches to MAIN.
