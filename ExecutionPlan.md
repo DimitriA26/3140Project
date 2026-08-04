@@ -1,10 +1,10 @@
 # Vertical Slice Breakdown for 5 Developers
-Parallel execution: I set this up for Tier 2. 
-Please test. 
-Use separate commit branches (as I have put below per person's task) will help us fix one bug at a time.
-We will all peer review before we push any branches to MAIN. 
-Tasks are guidelines/suggestions so you can tweak to your liking as long as we fulfill the necessary requirements. 
-Please check off completed tasks as they are completed, we need some kind of global project management. 
+## Parallel execution: I set this up for Tier 2. 
+## Please test. 
+## Use separate commit branches (as I have put below per person's task) will help us fix one bug at a time.
+## We will all peer review before we push any branches to MAIN. 
+## Tasks are guidelines/suggestions so you can tweak to your liking as long as we fulfill the necessary requirements. 
+## Please check off completed tasks as they are completed, we need some kind of global project management. 
 *I recommend reading the whole thing to get the full picture I really broke it down into layman's terms. We can do this, guys!!!*
 # Phase 0: Foundation (Schema) - Ashley
 ## Task 1: PostgreSQL Schema & Seed Data 
