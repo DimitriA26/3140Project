@@ -31,15 +31,16 @@
 - [ ] Seed script runs without errors
 - [ ] All team members can clone and initialize database locally
 
-# 5 Core Vertical Slices (this ensures that we have some semblance of an app even if someone doesn't complete/do their slice
-Features will be linked to you to ensure fair grading. 
-**Please insert your name here to absorb the responsibilities of a slice**
+# 5 Core Vertical Slices
+- Features will be linked to you to ensure fair grading. 
+
 **Please utilize the recommended branch name**
-## Role: Authentication & User Management
+
+## Role: Authentication & User Management [insert_name]
 **Branch: authentication**
 
 ### Backend Tasks
-- [ ] Create user controller 
+- [ ] Create authController.js
 - [ ] Hash passwords
 - [ ] Register endpoint (for a new account)
 - [ ] Login endpoint (for returning user) returns JSON WEB TOKEN
@@ -54,7 +55,7 @@ Features will be linked to you to ensure fair grading.
     -> Return current user 
 
 ### Frontend Tasks
-- [ ] Create authentication service 
+- [ ] Create authentication service -> authService.js
 - [ ] Register function (POST to backend)
 - [ ] Login function (POST to backend, store token in localStorage) 
 - [ ] Get current user function
@@ -72,13 +73,12 @@ Features will be linked to you to ensure fair grading.
 - [ ] Test protected routes without token 
 - [ ] Test token persistence 
 
-**Please insert your name here to absorb the responsibilities of a slice**
 **Please utilize the recommended branch name**
-## Role: Customer Order History & Order Details
+## Role: Customer Order History & Order Details [insert_name]
 **Branch: order-history**
 
 ### Backend Tasks
-- [ ] Create order controller
+- [ ] Create orderController.js
 - [ ] Get all orders for current user
 - [ ] Get single order by ID (with order items) 
 - [ ] List order items for an order
@@ -107,9 +107,8 @@ Features will be linked to you to ensure fair grading.
 - [ ] empty state displays when no orders exist
 - [ ] only authenticated users can view their own orders -> *please sign in to view order/order history*
 
-**Please insert your name here to absorb the responsibilities of a slice**
 **Please utilize the recommended branch name**
-## Role: Product Search, Filter & Sort
+## Role: Product Search, Filter & Sort [insert_name]
 **Branch: product-discovery**
 
 ### Backend Tasks 
@@ -146,9 +145,8 @@ Features will be linked to you to ensure fair grading.
 - [ ] query params persist in URL (products?category=X&sort=price&order=asc&search=term)
 - [ ] results update without page reload 
 
-**Please insert your name here to absorb the responsibilities of a slice**
 **Please utilize the recommended branch name**
-## Role: Admin Product Management
+## Role: Admin Product Management [insert_name]
 **Branch: admin-products**
 
 ### Backend Tasks 
@@ -186,9 +184,8 @@ Features will be linked to you to ensure fair grading.
 - [ ] Non-admins cannot access admin routes
 - [ ] form validation prevents invalid/incomplete data
 
-**Please insert your name here to absorb the responsibilities of a slice**
 **Please utilize the recommended branch name**
-## Role: Admin Order Management
+## Role: Admin Order Management [insert_name]
 **Branch: admin-orders**
 
 ### Backend Tasks
