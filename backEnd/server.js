@@ -8,3 +8,7 @@ app.get("/", (req, res) => { //req is the incoming request, res is the outgoing 
 app.listen(4000, () => { // starts up a live server instance hosted at port 4000
   console.log("Server running on port 4000"); // outputs a print statement to the console log
 });
+
+const { getProduct } = require("./db_functions/search.js"); // imports the search function from the search.js file
+
+getProduct("Gaming");
