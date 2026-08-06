@@ -1,7 +1,7 @@
 # Vertical Slice Breakdown for 5 Developers
  - Linking the outline Dmitri made [Outline](https://docs.google.com/document/d/1LFvqoC0xGLnw0gpgd8h-Ii8EkUXfOH-Cwk532xo7Dx0/edit?tab=t.0#heading=h.1eggkkgetqh3) -> this breaks it down literally function by function its very granular good to work side by side with. 
  - Parallel execution: I set this up for Tier 2.
- - 
+ - You can push this md file to main whenever you update the checklist. 
  - Please test.
  - Use separate commit branches (as I have put below per person's task) will help us fix one bug at a time.
  - We will all peer review before we push any branches to MAIN.
@@ -12,13 +12,13 @@
 ## Task 1: PostgreSQL Schema & Seed Data 
 ### Subtasks:
 - [x] Create database and connection module
-- [ ] backend/config/database.js with connection pool
-- [ ] environment variables
+- [x] backend/config/database.js with connection pool
+- [x] environment variables
 - [x] Foreign keys, indexes, constraints 
-- [ ] Create seed script 
-- [ ] 8+ products with realistic data
-- [ ] 2-3 test users (customer & admin) 
-- [ ] write schema migration file 
+- [x] Create seed script 
+- [x] 8+ products with realistic data
+- [x] 2-3 test users (customer & admin) 
+- [x] write schema migration file 
 
 #### Tables: 
 - [x] **Users** (id, email, password_hash, name, role)
