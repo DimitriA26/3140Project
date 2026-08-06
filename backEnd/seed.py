@@ -92,6 +92,9 @@ def seed():
             ("PID004", "Muji Pen Set", "A set of high-quality pens.", 15.00, 30, "CAT002"),
             ("PID005", "Graphing Calculator", "A powerful graphing calculator for advanced mathematics.", 150.00, 5, "CAT003"),
             ("PID006", "Jansport Backpack", "A durable backpack for carrying your items.", 50.00, 20, "CAT004"),
+            ("PID007", "Wireless Mouse", "A comfortable wireless mouse for everyday use.", 25.00, 25, "CAT003"),
+            ("PID008", "USB-C Hub", "A versatile USB-C hub for connecting multiple devices.", 40.00, 15, "CAT003"),
+            ("PID009", "Mechanical Keyboard", "A mechanical keyboard with customizable keys.", 120.00, 10, "CAT003"),
         ]
 
         for product in products:
@@ -104,9 +107,12 @@ def seed():
 
         #Seed orders 
         orders = [
-            ("ORD001", users[0][0], two_days_ago, 150.00, "Processing") # calculator and backpack
-            ("ORD002", users[1][0], yesterday, 175.00, "Pending") # K&R and Hitchhiker's
-            ("ORD003", users[0][0], today, 600.00, "Cancelled") # 4 calculators
+            ("ORD001", users[0][0], two_days_ago, 150.00, "Shipped"), # calculator and backpack
+            ("ORD002", users[1][0], yesterday, 175.00, "Pending"),  # K&R and Hitchhiker's
+            ("ORD003", users[0][0], today, 600.00, "Cancelled"), # 4 calculators
+            ("ORD004", users[1][0], today, 65.00, "Processing")  # wireless mouse and USB-C hub
+            ("ORD005", users[0][0], two_days_ago, 145.00, "Shipped")  # wireless mouse and mechanical keyboard
+
         ]
 
         for order in orders:
@@ -122,7 +128,11 @@ def seed():
             (orders[0][0], products[5][0], 1, 50.00),
             (orders[1][0], products[0][0], 1, 75.00),
             (orders[1][0], products[1][0], 1, 100.00),
-            (orders[2][0], products[4][0], 4, 150.00)
+            (orders[2][0], products[4][0], 4, 150.00),
+            (orders[3][0], products[6][0], 1, 25.00),
+            (orders[3][0], products[7][0], 1, 40.00),
+            (orders[4][0], products[6][0], 1, 25.00),
+            (orders[4][0], products[8][0], 1, 120.00)
         ]
 
         for item in order_items:
@@ -150,5 +160,7 @@ def seed():
         cart_items = [
             (1, products[2][0], 3), # 3 notebooks in user 1's cart
             (1, products[3][0], 2), # 2 pen sets in user 1's cart
-            (2, products[5][0], 1)  # 1 backpack in user 2's cart
+            (2, products[5][0], 1),  # 1 backpack in user 2's cart
+            (2, products[6][0], 1),  # 1 wireless mouse in user 2's cart
+            (2, products[7][0], 1)   # 1 USB-C hub in user 2's cart
         ]
