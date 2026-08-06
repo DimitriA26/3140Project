@@ -10,6 +10,7 @@
  -  *I recommend reading the whole thing to get the full picture I really broke it down into layman's terms. We can do this, guys!!!*
 # Phase 0: Foundation (Schema) - Ashley
 ## Task 1: PostgreSQL Schema & Seed Data 
+**Branch: seed-data**
 ### Subtasks:
 - [x] Create database and connection module
 - [x] backend/config/database.js with connection pool
