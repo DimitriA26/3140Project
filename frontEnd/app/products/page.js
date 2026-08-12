@@ -98,6 +98,7 @@ export default function ProductsPage() {
     <div className={`container ${styles.page}`}>
       <header className={styles.header}>
         <h1>Products</h1>
+
         <p>
           Browse and discover products that match what you are looking for.
         </p>
@@ -130,9 +131,11 @@ export default function ProductsPage() {
               }
             >
               <option value="">All Categories</option>
-              <option value="electronics">Electronics</option>
-              <option value="outdoors">Outdoors</option>
-              <option value="home">Home</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Books">Books</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Home">Home</option>
+              <option value="Sports">Sports</option>
             </select>
           </div>
 
@@ -172,6 +175,7 @@ export default function ProductsPage() {
                 setInStock(event.target.checked)
               }
             />
+
             In stock only
           </label>
 
@@ -206,6 +210,7 @@ export default function ProductsPage() {
           <div className={styles.resultsHeader}>
             <div>
               <h2>Product Results</h2>
+
               <p>
                 Use the filters to narrow down the catalog.
               </p>
