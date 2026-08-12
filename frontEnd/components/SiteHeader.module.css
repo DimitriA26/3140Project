@@ -1,0 +1,246 @@
+.announcement {
+    background: var(--brand);
+    color: #ffffff;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+  }
+  
+  .announcement > div {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .announcement span {
+    color: rgb(255 255 255 / 70%);
+  }
+  
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 74px;
+    background: rgb(255 255 255 / 92%);
+    border-bottom: 1px solid rgb(228 230 226 / 85%);
+    backdrop-filter: blur(18px);
+  }
+  
+  .headerInner {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 180px 1fr 180px;
+    align-items: center;
+  }
+  
+  .logo {
+    width: fit-content;
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: 0.18em;
+  }
+  
+  .navigation {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    gap: 34px;
+  }
+  
+  .navigation a {
+    position: relative;
+    padding-block: 26px;
+    color: #424640;
+    font-size: 14px;
+    font-weight: 520;
+    transition:
+      color var(--transition),
+      opacity var(--transition);
+  }
+  
+  .navigation a::after {
+    position: absolute;
+    right: 0;
+    bottom: 18px;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    margin: auto;
+    background: var(--brand);
+    content: "";
+    transition: width var(--transition);
+  }
+  
+  .navigation a:hover {
+    color: var(--foreground);
+  }
+  
+  .navigation a:hover::after {
+    width: 100%;
+  }
+  
+  .actions {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  
+  .iconButton {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-full);
+    transition:
+      background var(--transition),
+      transform var(--transition);
+  }
+  
+  .iconButton:hover {
+    background: var(--surface-subtle);
+  }
+  
+  .iconButton:active {
+    transform: scale(0.94);
+  }
+  
+  .cartCount {
+    position: absolute;
+    top: 3px;
+    right: 1px;
+    min-width: 17px;
+    height: 17px;
+    padding-inline: 4px;
+    display: grid;
+    place-items: center;
+    border: 2px solid #ffffff;
+    border-radius: var(--radius-full);
+    background: var(--brand);
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+  }
+  
+  .mobileMenuButton {
+    display: none;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    background: transparent;
+    color: var(--foreground);
+    cursor: pointer;
+  }
+  
+  .backdrop {
+    display: none;
+  }
+  
+  @media (max-width: 900px) {
+    .headerInner {
+      grid-template-columns: 44px 1fr auto;
+    }
+  
+    .mobileMenuButton {
+      display: grid;
+    }
+  
+    .logo {
+      justify-self: center;
+    }
+  
+    .navigation {
+      position: fixed;
+      z-index: 102;
+      top: 108px;
+      left: 0;
+      width: min(340px, 87vw);
+      height: calc(100dvh - 108px);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      transform: translateX(-105%);
+      transition: transform 220ms ease;
+    }
+  
+    .navigationOpen {
+      transform: translateX(0);
+    }
+  
+    .navigation a {
+      padding: 14px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+    }
+  
+    .navigation a:hover {
+      background: var(--surface-subtle);
+    }
+  
+    .navigation a::after {
+      display: none;
+    }
+  
+    .backdrop {
+      position: fixed;
+      z-index: 99;
+      inset: 108px 0 0;
+      display: block;
+      width: 100%;
+      background: rgb(22 24 22 / 35%);
+      backdrop-filter: blur(2px);
+      cursor: default;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .announcement > div {
+      justify-content: center;
+    }
+  
+    .announcement span {
+      display: none;
+    }
+  
+    .header {
+      height: 66px;
+    }
+  
+    .navigation {
+      top: 100px;
+      height: calc(100dvh - 100px);
+    }
+  
+    .backdrop {
+      inset: 100px 0 0;
+    }
+  
+    .optionalAction {
+      display: none;
+    }
+  
+    .actions {
+      gap: 0;
+    }
+  
+    .iconButton {
+      width: 37px;
+      height: 37px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .actions > :first-child {
+      display: none;
+    }
+  
+    .logo {
+      font-size: 19px;
+    }
+  }
