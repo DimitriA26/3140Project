@@ -4,6 +4,57 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 
+const sampleProducts = [
+  {
+    id: "PROD001",
+    name: "College Textbook",
+    description: "A required textbook for introductory college courses.",
+    category: "Textbooks",
+    price: 89.99,
+    inventory: 14,
+  },
+  {
+    id: "PROD002",
+    name: "Scientific Calculator",
+    description: "A scientific calculator for math and science classes.",
+    category: "Electronics",
+    price: 34.99,
+    inventory: 20,
+  },
+  {
+    id: "PROD003",
+    name: "College Backpack",
+    description: "A durable backpack with space for books and a laptop.",
+    category: "Backpacks",
+    price: 49.99,
+    inventory: 25,
+  },
+  {
+    id: "PROD004",
+    name: "Notebook Pack",
+    description: "A multi-pack of notebooks for classes and study notes.",
+    category: "Office Supplies",
+    price: 12.99,
+    inventory: 0,
+  },
+  {
+    id: "PROD005",
+    name: "Wireless Mouse",
+    description: "A compact wireless mouse for laptops and study setups.",
+    category: "Electronics",
+    price: 24.99,
+    inventory: 9,
+  },
+  {
+    id: "PROD006",
+    name: "Academic Planner",
+    description: "A semester planner for assignments, exams, and deadlines.",
+    category: "Office Supplies",
+    price: 18.99,
+    inventory: 11,
+  },
+];
+
 export default function ProductsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,7 +81,7 @@ export default function ProductsPage() {
   );
 
   const [sort, setSort] = useState(
-    searchParams.get("sort") || "newest"
+    searchParams.get("sort") || "name-asc"
   );
 
   useEffect(() => {
@@ -64,7 +115,7 @@ export default function ProductsPage() {
       params.set("inStock", "true");
     }
 
-    if (sort && sort !== "newest") {
+    if (sort && sort !== "name-asc") {
       params.set("sort", sort);
     }
 
@@ -93,6 +144,52 @@ export default function ProductsPage() {
     router,
     searchParams,
   ]);
+
+  const filteredProducts = sampleProducts
+    .filter((product) => {
+      const searchValue = debouncedSearch.toLowerCase();
+
+      const matchesSearch =
+        !searchValue ||
+        product.name.toLowerCase().includes(searchValue) ||
+        product.description.toLowerCase().includes(searchValue);
+
+      const matchesCategory =
+        !category || product.category === category;
+
+      const matchesMinPrice =
+        !minPrice || product.price >= Number(minPrice);
+
+      const matchesMaxPrice =
+        !maxPrice || product.price <= Number(maxPrice);
+
+      const matchesStock =
+        !inStock || product.inventory > 0;
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesMinPrice &&
+        matchesMaxPrice &&
+        matchesStock
+      );
+    })
+    .sort((a, b) => {
+      switch (sort) {
+        case "price-asc":
+          return a.price - b.price;
+
+        case "price-desc":
+          return b.price - a.price;
+
+        case "name-desc":
+          return b.name.localeCompare(a.name);
+
+        case "name-asc":
+        default:
+          return a.name.localeCompare(b.name);
+      }
+    });
 
   return (
     <div className={`container ${styles.page}`}>
@@ -131,11 +228,12 @@ export default function ProductsPage() {
               }
             >
               <option value="">All Categories</option>
+              <option value="Textbooks">Textbooks</option>
+              <option value="Office Supplies">
+                Office Supplies
+              </option>
               <option value="Electronics">Electronics</option>
-              <option value="Books">Books</option>
-              <option value="Clothing">Clothing</option>
-              <option value="Home">Home</option>
-              <option value="Sports">Sports</option>
+              <option value="Backpacks">Backpacks</option>
             </select>
           </div>
 
@@ -189,18 +287,20 @@ export default function ProductsPage() {
                 setSort(event.target.value)
               }
             >
-              <option value="newest">Newest</option>
-              <option value="price-asc">
-                Price: Low to High
-              </option>
-              <option value="price-desc">
-                Price: High to Low
-              </option>
               <option value="name-asc">
                 Name: A-Z
               </option>
+
               <option value="name-desc">
                 Name: Z-A
+              </option>
+
+              <option value="price-asc">
+                Price: Low to High
+              </option>
+
+              <option value="price-desc">
+                Price: High to Low
               </option>
             </select>
           </div>
@@ -212,16 +312,69 @@ export default function ProductsPage() {
               <h2>Product Results</h2>
 
               <p>
-                Use the filters to narrow down the catalog.
+                {filteredProducts.length} product
+                {filteredProducts.length === 1 ? "" : "s"} found
               </p>
             </div>
           </div>
 
-          <div className={styles.placeholder}>
-            <p>
-              Products will appear here once the API is connected.
-            </p>
-          </div>
+          {filteredProducts.length > 0 ? (
+            <div className={styles.productGrid}>
+              {filteredProducts.map((product) => (
+                <article
+                  key={product.id}
+                  className={styles.productCard}
+                >
+                  <div className={styles.productImage}>
+                    <span>No image</span>
+                  </div>
+
+                  <div className={styles.productBody}>
+                    <p className={styles.productCategory}>
+                      {product.category}
+                    </p>
+
+                    <h3>{product.name}</h3>
+
+                    <p className={styles.productDescription}>
+                      {product.description}
+                    </p>
+
+                    <div className={styles.productFooter}>
+                      <strong className={styles.productPrice}>
+                        ${product.price.toFixed(2)}
+                      </strong>
+
+                      <span
+                        className={
+                          product.inventory > 0
+                            ? styles.inStock
+                            : styles.outOfStock
+                        }
+                      >
+                        {product.inventory > 0
+                          ? `${product.inventory} in stock`
+                          : "Out of stock"}
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <h3>No products found</h3>
+
+              <p>
+                Try changing your search or filter options.
+              </p>
+            </div>
+          )}
+
+          <p className={styles.apiNote}>
+            Product results are using temporary frontend data until the
+            PostgreSQL API connection is available.
+          </p>
         </section>
       </div>
     </div>
