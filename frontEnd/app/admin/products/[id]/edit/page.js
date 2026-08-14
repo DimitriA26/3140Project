@@ -4,18 +4,44 @@ import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-export default function EditProductPage() {
-  const params = useParams();
-
-  const [formData, setFormData] = useState({
+const sampleProducts = {
+  PROD001: {
     name: "Sample Laptop",
-    description: "A sample product used for the admin product management UI.",
+    description: "A sample laptop used for the admin product management UI.",
     category: "Electronics",
     price: "899.99",
     inventory: "12",
     imageUrl: "",
-  });
+  },
 
+  PROD002: {
+    name: "College Backpack",
+    description:
+      "A durable backpack designed for books, laptops, and school supplies.",
+    category: "Backpacks",
+    price: "49.99",
+    inventory: "25",
+    imageUrl: "",
+  },
+
+  PROD003: {
+    name: "Notebook Set",
+    description:
+      "A set of notebooks for class notes and everyday school use.",
+    category: "Office Supplies",
+    price: "14.99",
+    inventory: "0",
+    imageUrl: "",
+  },
+};
+
+export default function EditProductPage() {
+  const params = useParams();
+
+  const selectedProduct =
+    sampleProducts[params.id] || sampleProducts.PROD001;
+
+  const [formData, setFormData] = useState(selectedProduct);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -30,6 +56,7 @@ export default function EditProductPage() {
 
   function handleSubmit(event) {
     event.preventDefault();
+
     setError("");
     setSuccess("");
 
@@ -37,8 +64,8 @@ export default function EditProductPage() {
       !formData.name ||
       !formData.description ||
       !formData.category ||
-      !formData.price ||
-      !formData.inventory
+      formData.price === "" ||
+      formData.inventory === ""
     ) {
       setError("Please complete all required fields.");
       return;
@@ -76,7 +103,9 @@ export default function EditProductPage() {
         <div style={styles.header}>
           <div>
             <p style={styles.eyebrow}>Admin</p>
+
             <h1 style={styles.title}>Edit product</h1>
+
             <p style={styles.subtitle}>
               Update product details and inventory.
             </p>
@@ -136,9 +165,18 @@ export default function EditProductPage() {
                 style={styles.input}
               >
                 <option value="Textbooks">Textbooks</option>
-                <option value="Office Supplies">Office Supplies</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Backpacks">Backpacks</option>
+
+                <option value="Office Supplies">
+                  Office Supplies
+                </option>
+
+                <option value="Electronics">
+                  Electronics
+                </option>
+
+                <option value="Backpacks">
+                  Backpacks
+                </option>
               </select>
             </div>
 
@@ -195,15 +233,30 @@ export default function EditProductPage() {
             </div>
           </div>
 
-          {error && <p style={styles.error}>{error}</p>}
-          {success && <p style={styles.success}>{success}</p>}
+          {error && (
+            <p style={styles.error}>
+              {error}
+            </p>
+          )}
+
+          {success && (
+            <p style={styles.success}>
+              {success}
+            </p>
+          )}
 
           <div style={styles.actions}>
-            <button type="submit" style={styles.primaryButton}>
+            <button
+              type="submit"
+              style={styles.primaryButton}
+            >
               Save changes
             </button>
 
-            <Link href="/admin/products" style={styles.cancelButton}>
+            <Link
+              href="/admin/products"
+              style={styles.cancelButton}
+            >
               Cancel
             </Link>
           </div>
