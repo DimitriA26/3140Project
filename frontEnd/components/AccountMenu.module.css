@@ -1,0 +1,103 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.signedInDot {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #ffffff;
+  border-radius: var(--radius-full);
+  background: var(--success);
+}
+
+.menu {
+  position: absolute;
+  z-index: 110;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 244px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.identity {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-bottom: 1px solid var(--border);
+}
+
+.identity strong {
+  font-size: 14px;
+  font-weight: 620;
+}
+
+.identity span {
+  overflow: hidden;
+  color: var(--foreground-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roleBadge {
+  width: fit-content;
+  margin-top: 7px;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.links {
+  padding-block: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.links a,
+.signOut {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--foreground);
+  font-size: 13.5px;
+  font-weight: 520;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.links a:hover,
+.signOut:hover {
+  background: var(--surface-subtle);
+}
+
+.signOut {
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  color: var(--danger);
+}
+
+@media (max-width: 600px) {
+  .menu {
+    width: 220px;
+  }
+}

@@ -7,11 +7,11 @@ import {
   X,
   Search,
   ShoppingBag,
-  UserRound,
   Heart,
 } from "lucide-react";
 
 import styles from "./SiteHeader.module.css";
+import AccountMenu from "@/components/AccountMenu";
 import { siteConfig } from "@/lib/siteConfig";
 
 export default function SiteHeader() {
@@ -91,13 +91,7 @@ export default function SiteHeader() {
               <Heart size={20} strokeWidth={1.8} />
             </Link>
 
-            <Link
-              href="/auth/login"
-              className={styles.iconButton}
-              aria-label="Account"
-            >
-              <UserRound size={20} strokeWidth={1.8} />
-            </Link>
+            <AccountMenu iconClassName={styles.iconButton} />
 
             <Link
               href="/cart"

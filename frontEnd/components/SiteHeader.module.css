@@ -93,6 +93,11 @@
     display: grid;
     place-items: center;
     border-radius: var(--radius-full);
+    /* Also applied to the <button> inside AccountMenu, which needs these
+       resets that anchors get for free. */
+    background: transparent;
+    color: var(--foreground);
+    cursor: pointer;
     transition:
       background var(--transition),
       transform var(--transition);
