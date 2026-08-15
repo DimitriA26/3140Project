@@ -1,14 +1,34 @@
-const express = require("express"); //sets the name of a package to be used
-const app = express(); //creates an object called app using the class of the package
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
 
-app.get("/", (req, res) => { //req is the incoming request, res is the outgoing response.
-  res.send("Hello, this is the backend"); // executes a response for the res
+const authRoutes = require("./routes/authRoutes");
+const productRoutes = require("./routes/productRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const errorHandler = require("./middleware/errorHandler");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Quick check that the server is alive — useful once this is deployed
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
-app.listen(4000, () => { // starts up a live server instance hosted at port 4000
-  console.log("Server running on port 4000"); // outputs a print statement to the console log
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/admin", adminRoutes);
+
+// Must be registered after all other routes
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Backend server running on http://localhost:${PORT}`);
 });
-
-const { getProduct } = require("./db_functions/search.js"); // imports the search function from the search.js file
-
-getProduct("Gaming");

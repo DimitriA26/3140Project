@@ -1,0 +1,9 @@
+// Catches any error passed to next(err) from a controller so the server
+// never crashes and never leaks a raw stack trace to the client.
+function errorHandler(err, req, res, next) {
+  console.error(err);
+  const status = err.status || 500;
+  res.status(status).json({ error: err.message || "Something went wrong" });
+}
+
+module.exports = errorHandler;
