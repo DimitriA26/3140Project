@@ -12,10 +12,12 @@ import {
 
 import styles from "./SiteHeader.module.css";
 import AccountMenu from "@/components/AccountMenu";
+import { useCart } from "@/context/CartContext";
 import { siteConfig } from "@/lib/siteConfig";
 
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { itemCount } = useCart();
 
   function closeMenu() {
     setMenuOpen(false);
@@ -96,12 +98,17 @@ export default function SiteHeader() {
             <Link
               href="/cart"
               className={`${styles.iconButton} ${styles.cartButton}`}
-              aria-label="Shopping cart"
+              aria-label={`Shopping cart, ${itemCount} ${
+                itemCount === 1 ? "item" : "items"
+              }`}
             >
               <ShoppingBag size={20} strokeWidth={1.8} />
-              <span className={styles.cartCount} aria-label="0 items">
-                0
-              </span>
+
+              {itemCount > 0 && (
+                <span className={styles.cartCount} aria-hidden="true">
+                  {itemCount > 99 ? "99+" : itemCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>

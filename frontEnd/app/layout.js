@@ -4,6 +4,7 @@ import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
 import { siteConfig } from "@/lib/siteConfig";
 
 const geistSans = Geist({
@@ -32,13 +33,16 @@ export default function RootLayout({ children }) {
     >
       <body>
         <AuthProvider>
-          <div className="site-shell">
-            <SiteHeader />
+          {/* Cart lives inside Auth because the cart API requires a signed-in user. */}
+          <CartProvider>
+            <div className="site-shell">
+              <SiteHeader />
 
-            <main className="site-main">{children}</main>
+              <main className="site-main">{children}</main>
 
-            <SiteFooter />
-          </div>
+              <SiteFooter />
+            </div>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>
