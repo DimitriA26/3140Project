@@ -125,12 +125,6 @@
   border-bottom: 1px solid var(--border);
 }
 
-.productImage img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-
 .productBody h3 a {
   color: inherit;
   text-decoration: none;

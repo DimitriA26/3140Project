@@ -12,6 +12,7 @@ import ErrorBanner from "@/components/ErrorBanner";
 import EmptyState from "@/components/EmptyState";
 import { useCart } from "@/context/CartContext";
 import { formatCurrency } from "@/lib/formatCurrency";
+import { getProductIcon } from "@/lib/productIcon";
 
 function CartContents() {
   const {
@@ -76,18 +77,12 @@ function CartContents() {
           <ul className={styles.items}>
             {items.map((item) => {
               const isPending = pendingItemIds.includes(item.id);
+              const ItemIcon = getProductIcon(item);
 
               return (
                 <li key={item.id} className={styles.item} data-pending={isPending}>
                   <div className={styles.thumbnail}>
-                    {item.imageUrl ? (
-                      // Product images come from arbitrary URLs in the database,
-                      // so next/image would need a remotePatterns entry per host.
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={item.imageUrl} alt={item.name} />
-                    ) : (
-                      <span aria-hidden="true" />
-                    )}
+                    <ItemIcon size={28} strokeWidth={1.4} aria-hidden="true" />
                   </div>
 
                   <div className={styles.details}>

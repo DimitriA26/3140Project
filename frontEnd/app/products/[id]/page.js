@@ -9,6 +9,7 @@ import Spinner from "@/components/Spinner";
 import ErrorBanner from "@/components/ErrorBanner";
 import AddToCartButton from "@/components/AddToCartButton";
 import { formatCurrency } from "@/lib/formatCurrency";
+import { getProductIcon } from "@/lib/productIcon";
 import { getProductById } from "@/services/productService";
 
 export default function ProductDetailPage() {
@@ -69,6 +70,8 @@ export default function ProductDetailPage() {
     );
   }
 
+  const ProductIcon = getProductIcon(product);
+
   return (
     <div className={`container ${styles.page}`}>
       <Link href="/products" className={styles.back}>
@@ -77,12 +80,7 @@ export default function ProductDetailPage() {
 
       <div className={styles.layout}>
         <div className={styles.image}>
-          {product.image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={product.image_url} alt={product.name} />
-          ) : (
-            <span>No image</span>
-          )}
+          <ProductIcon size={96} strokeWidth={1.2} aria-hidden="true" />
         </div>
 
         <div className={styles.details}>

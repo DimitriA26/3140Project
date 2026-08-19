@@ -9,6 +9,7 @@ import ErrorBanner from "@/components/ErrorBanner";
 import EmptyState from "@/components/EmptyState";
 import AddToCartButton from "@/components/AddToCartButton";
 import { formatCurrency } from "@/lib/formatCurrency";
+import { getProductIcon } from "@/lib/productIcon";
 import { getProducts } from "@/services/productService";
 
 const CATEGORIES = ["Electronics", "Books", "Clothing", "Home", "Sports"];
@@ -280,7 +281,10 @@ export default function ProductsPage() {
             <ErrorBanner message={error} />
           ) : products.length > 0 ? (
             <div className={styles.productGrid}>
-              {products.map((product) => (
+              {products.map((product) => {
+                const ProductIcon = getProductIcon(product);
+
+                return (
                 <article
                   key={product.id}
                   className={styles.productCard}
@@ -289,12 +293,7 @@ export default function ProductsPage() {
                     href={`/products/${product.id}`}
                     className={styles.productImage}
                   >
-                    {product.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={product.image_url} alt={product.name} />
-                    ) : (
-                      <span>No image</span>
-                    )}
+                    <ProductIcon size={48} strokeWidth={1.4} aria-hidden="true" />
                   </Link>
 
                   <div className={styles.productBody}>
@@ -336,7 +335,8 @@ export default function ProductsPage() {
                     />
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <EmptyState
