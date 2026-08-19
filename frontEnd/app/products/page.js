@@ -1,59 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
+import Spinner from "@/components/Spinner";
+import ErrorBanner from "@/components/ErrorBanner";
+import EmptyState from "@/components/EmptyState";
+import AddToCartButton from "@/components/AddToCartButton";
+import { formatCurrency } from "@/lib/formatCurrency";
+import { getProducts } from "@/services/productService";
 
-const sampleProducts = [
-  {
-    id: "PROD001",
-    name: "College Textbook",
-    description: "A required textbook for introductory college courses.",
-    category: "Textbooks",
-    price: 89.99,
-    inventory: 14,
-  },
-  {
-    id: "PROD002",
-    name: "Scientific Calculator",
-    description: "A scientific calculator for math and science classes.",
-    category: "Electronics",
-    price: 34.99,
-    inventory: 20,
-  },
-  {
-    id: "PROD003",
-    name: "College Backpack",
-    description: "A durable backpack with space for books and a laptop.",
-    category: "Backpacks",
-    price: 49.99,
-    inventory: 25,
-  },
-  {
-    id: "PROD004",
-    name: "Notebook Pack",
-    description: "A multi-pack of notebooks for classes and study notes.",
-    category: "Office Supplies",
-    price: 12.99,
-    inventory: 0,
-  },
-  {
-    id: "PROD005",
-    name: "Wireless Mouse",
-    description: "A compact wireless mouse for laptops and study setups.",
-    category: "Electronics",
-    price: 24.99,
-    inventory: 9,
-  },
-  {
-    id: "PROD006",
-    name: "Academic Planner",
-    description: "A semester planner for assignments, exams, and deadlines.",
-    category: "Office Supplies",
-    price: 18.99,
-    inventory: 11,
-  },
-];
+const CATEGORIES = ["Electronics", "Books", "Clothing", "Home", "Sports"];
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -83,6 +41,10 @@ export default function ProductsPage() {
   const [sort, setSort] = useState(
     searchParams.get("sort") || "name-asc"
   );
+
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -145,51 +107,44 @@ export default function ProductsPage() {
     searchParams,
   ]);
 
-  const filteredProducts = sampleProducts
-    .filter((product) => {
-      const searchValue = debouncedSearch.toLowerCase();
+  useEffect(() => {
+    let cancelled = false;
 
-      const matchesSearch =
-        !searchValue ||
-        product.name.toLowerCase().includes(searchValue) ||
-        product.description.toLowerCase().includes(searchValue);
+    async function loadProducts() {
+      setIsLoading(true);
+      setError("");
 
-      const matchesCategory =
-        !category || product.category === category;
+      try {
+        const data = await getProducts({
+          search: debouncedSearch,
+          category,
+          minPrice,
+          maxPrice,
+          inStock,
+          sort,
+          limit: 50,
+        });
 
-      const matchesMinPrice =
-        !minPrice || product.price >= Number(minPrice);
-
-      const matchesMaxPrice =
-        !maxPrice || product.price <= Number(maxPrice);
-
-      const matchesStock =
-        !inStock || product.inventory > 0;
-
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesMinPrice &&
-        matchesMaxPrice &&
-        matchesStock
-      );
-    })
-    .sort((a, b) => {
-      switch (sort) {
-        case "price-asc":
-          return a.price - b.price;
-
-        case "price-desc":
-          return b.price - a.price;
-
-        case "name-desc":
-          return b.name.localeCompare(a.name);
-
-        case "name-asc":
-        default:
-          return a.name.localeCompare(b.name);
+        if (!cancelled) {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message || "Failed to load products.");
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
-    });
+    }
+
+    loadProducts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedSearch, category, minPrice, maxPrice, inStock, sort]);
 
   return (
     <div className={`container ${styles.page}`}>
@@ -228,12 +183,11 @@ export default function ProductsPage() {
               }
             >
               <option value="">All Categories</option>
-              <option value="Textbooks">Textbooks</option>
-              <option value="Office Supplies">
-                Office Supplies
-              </option>
-              <option value="Electronics">Electronics</option>
-              <option value="Backpacks">Backpacks</option>
+              {CATEGORIES.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -311,30 +265,48 @@ export default function ProductsPage() {
             <div>
               <h2>Product Results</h2>
 
-              <p>
-                {filteredProducts.length} product
-                {filteredProducts.length === 1 ? "" : "s"} found
-              </p>
+              {!isLoading && !error && (
+                <p>
+                  {products.length} product
+                  {products.length === 1 ? "" : "s"} found
+                </p>
+              )}
             </div>
           </div>
 
-          {filteredProducts.length > 0 ? (
+          {isLoading ? (
+            <Spinner label="Loading products…" />
+          ) : error ? (
+            <ErrorBanner message={error} />
+          ) : products.length > 0 ? (
             <div className={styles.productGrid}>
-              {filteredProducts.map((product) => (
+              {products.map((product) => (
                 <article
                   key={product.id}
                   className={styles.productCard}
                 >
-                  <div className={styles.productImage}>
-                    <span>No image</span>
-                  </div>
+                  <Link
+                    href={`/products/${product.id}`}
+                    className={styles.productImage}
+                  >
+                    {product.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={product.image_url} alt={product.name} />
+                    ) : (
+                      <span>No image</span>
+                    )}
+                  </Link>
 
                   <div className={styles.productBody}>
                     <p className={styles.productCategory}>
-                      {product.category}
+                      {product.category_name}
                     </p>
 
-                    <h3>{product.name}</h3>
+                    <h3>
+                      <Link href={`/products/${product.id}`}>
+                        {product.name}
+                      </Link>
+                    </h3>
 
                     <p className={styles.productDescription}>
                       {product.description}
@@ -342,7 +314,7 @@ export default function ProductsPage() {
 
                     <div className={styles.productFooter}>
                       <strong className={styles.productPrice}>
-                        ${product.price.toFixed(2)}
+                        {formatCurrency(product.price)}
                       </strong>
 
                       <span
@@ -357,24 +329,21 @@ export default function ProductsPage() {
                           : "Out of stock"}
                       </span>
                     </div>
+
+                    <AddToCartButton
+                      productId={product.id}
+                      inventory={product.inventory}
+                    />
                   </div>
                 </article>
               ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>
-              <h3>No products found</h3>
-
-              <p>
-                Try changing your search or filter options.
-              </p>
-            </div>
+            <EmptyState
+              title="No products found"
+              description="Try changing your search or filter options."
+            />
           )}
-
-          <p className={styles.apiNote}>
-            Product results are using temporary frontend data until the
-            PostgreSQL API connection is available.
-          </p>
         </section>
       </div>
     </div>

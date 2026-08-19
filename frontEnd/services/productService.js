@@ -1,6 +1,7 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+// Talks to /api/products — public catalog browsing, search, filter, and sort.
+import { apiClient } from "@/lib/apiClient";
 
+// GET /api/products?search=&category=&minPrice=&maxPrice=&inStock=&sort=&page=&limit=
 export async function getProducts(filters = {}) {
   const params = new URLSearchParams();
 
@@ -38,15 +39,36 @@ export async function getProducts(filters = {}) {
 
   const queryString = params.toString();
 
-  const url = queryString
-    ? `${API_BASE_URL}/api/products?${queryString}`
-    : `${API_BASE_URL}/api/products`;
+  return apiClient.get(
+    queryString ? `/api/products?${queryString}` : "/api/products"
+  );
+}
 
-  const response = await fetch(url);
+// GET /api/products/categories -> { categories }
+export async function getCategories() {
+  const data = await apiClient.get("/api/products/categories");
+  return data.categories;
+}
 
-  if (!response.ok) {
-    throw new Error("Failed to load products.");
-  }
+// GET /api/products/:id -> { product }
+export async function getProductById(id) {
+  const data = await apiClient.get(`/api/products/${id}`);
+  return data.product;
+}
 
-  return response.json();
+// POST /api/products  (admin only) -> { product }
+export async function createProduct(product) {
+  const data = await apiClient.post("/api/products", product, { auth: true });
+  return data.product;
+}
+
+// PUT /api/products/:id  (admin only) -> { product }
+export async function updateProduct(id, product) {
+  const data = await apiClient.put(`/api/products/${id}`, product, { auth: true });
+  return data.product;
+}
+
+// DELETE /api/products/:id  (admin only)
+export async function deleteProduct(id) {
+  return apiClient.delete(`/api/products/${id}`, { auth: true });
 }

@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import styles from "./page.module.css";
+import AdminRoute from "@/components/AdminRoute";
 import { getAllOrders, updateOrderStatus } from "@/services/adminService";
 
 const STATUS_OPTIONS = ["pending", "confirmed", "shipped", "delivered"];
 
-export default function AdminOrdersPage() {
+function AdminOrdersContent() {
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [sort, setSort] = useState("date-desc");
@@ -179,5 +180,13 @@ export default function AdminOrdersPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function AdminOrdersPage() {
+  return (
+    <AdminRoute>
+      <AdminOrdersContent />
+    </AdminRoute>
   );
 }

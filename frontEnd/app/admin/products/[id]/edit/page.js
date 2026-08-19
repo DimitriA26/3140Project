@@ -1,49 +1,77 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-const sampleProducts = {
-  PROD001: {
-    name: "Sample Laptop",
-    description: "A sample laptop used for the admin product management UI.",
-    category: "Electronics",
-    price: "899.99",
-    inventory: "12",
-    imageUrl: "",
-  },
+import AdminRoute from "@/components/AdminRoute";
+import Spinner from "@/components/Spinner";
+import {
+  getCategories,
+  getProductById,
+  updateProduct,
+} from "@/services/productService";
 
-  PROD002: {
-    name: "College Backpack",
-    description:
-      "A durable backpack designed for books, laptops, and school supplies.",
-    category: "Backpacks",
-    price: "49.99",
-    inventory: "25",
-    imageUrl: "",
-  },
-
-  PROD003: {
-    name: "Notebook Set",
-    description:
-      "A set of notebooks for class notes and everyday school use.",
-    category: "Office Supplies",
-    price: "14.99",
-    inventory: "0",
-    imageUrl: "",
-  },
+const emptyForm = {
+  name: "",
+  description: "",
+  category_id: "",
+  price: "",
+  inventory: "",
+  imageUrl: "",
 };
 
-export default function EditProductPage() {
+function EditProductContent() {
   const params = useParams();
+  const router = useRouter();
 
-  const selectedProduct =
-    sampleProducts[params.id] || sampleProducts.PROD001;
-
-  const [formData, setFormData] = useState(selectedProduct);
+  const [categories, setCategories] = useState([]);
+  const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setIsLoading(true);
+      setError("");
+
+      try {
+        const [product, categoryList] = await Promise.all([
+          getProductById(params.id),
+          getCategories(),
+        ]);
+
+        if (!cancelled) {
+          setCategories(categoryList);
+          setFormData({
+            name: product.name,
+            description: product.description || "",
+            category_id: product.category_id || "",
+            price: product.price,
+            inventory: product.inventory,
+            imageUrl: product.image_url || "",
+          });
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message || "Could not load this product.");
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [params.id]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -54,16 +82,15 @@ export default function EditProductPage() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     setError("");
-    setSuccess("");
 
     if (
       !formData.name ||
       !formData.description ||
-      !formData.category ||
+      !formData.category_id ||
       formData.price === "" ||
       formData.inventory === ""
     ) {
@@ -88,13 +115,27 @@ export default function EditProductPage() {
       return;
     }
 
-    // Backend update will be connected later.
-    console.log("Updated product:", {
-      id: params.id,
-      ...formData,
-    });
+    setIsSubmitting(true);
 
-    setSuccess("Product changes are valid and ready to be saved.");
+    try {
+      await updateProduct(params.id, {
+        name: formData.name,
+        description: formData.description,
+        category_id: Number(formData.category_id),
+        price,
+        inventory,
+        image_url: formData.imageUrl || null,
+      });
+
+      router.push("/admin/products");
+    } catch (err) {
+      setError(err.message || "Could not save these changes.");
+      setIsSubmitting(false);
+    }
+  }
+
+  if (isLoading) {
+    return <Spinner fullPage label="Loading product…" />;
   }
 
   return (
@@ -159,24 +200,17 @@ export default function EditProductPage() {
 
               <select
                 id="category"
-                name="category"
-                value={formData.category}
+                name="category_id"
+                value={formData.category_id}
                 onChange={handleChange}
                 style={styles.input}
               >
-                <option value="Textbooks">Textbooks</option>
-
-                <option value="Office Supplies">
-                  Office Supplies
-                </option>
-
-                <option value="Electronics">
-                  Electronics
-                </option>
-
-                <option value="Backpacks">
-                  Backpacks
-                </option>
+                <option value="">Select category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -234,14 +268,8 @@ export default function EditProductPage() {
           </div>
 
           {error && (
-            <p style={styles.error}>
+            <p style={styles.error} role="alert">
               {error}
-            </p>
-          )}
-
-          {success && (
-            <p style={styles.success}>
-              {success}
             </p>
           )}
 
@@ -249,8 +277,9 @@ export default function EditProductPage() {
             <button
               type="submit"
               style={styles.primaryButton}
+              disabled={isSubmitting}
             >
-              Save changes
+              {isSubmitting ? "Saving..." : "Save changes"}
             </button>
 
             <Link
@@ -261,13 +290,16 @@ export default function EditProductPage() {
             </Link>
           </div>
         </form>
-
-        <p style={styles.note}>
-          Product data will be loaded from and saved to the admin product API
-          once the backend is connected.
-        </p>
       </section>
     </main>
+  );
+}
+
+export default function EditProductPage() {
+  return (
+    <AdminRoute>
+      <EditProductContent />
+    </AdminRoute>
   );
 }
 
@@ -373,12 +405,6 @@ const styles = {
     margin: "0 0 20px",
   },
 
-  success: {
-    color: "#047857",
-    fontSize: "14px",
-    margin: "0 0 20px",
-  },
-
   actions: {
     display: "flex",
     alignItems: "center",
@@ -402,9 +428,4 @@ const styles = {
     fontWeight: "600",
   },
 
-  note: {
-    marginTop: "20px",
-    color: "#6b7280",
-    fontSize: "14px",
-  },
 };

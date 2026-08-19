@@ -125,6 +125,21 @@
   border-bottom: 1px solid var(--border);
 }
 
+.productImage img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.productBody h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.productBody h3 a:hover {
+  text-decoration: underline;
+}
+
 .productBody {
   display: flex;
   flex-direction: column;
@@ -205,12 +220,6 @@
 
 .emptyState p {
   color: var(--foreground-secondary);
-}
-
-.apiNote {
-  margin-top: 20px;
-  color: var(--foreground-secondary);
-  font-size: 0.875rem;
 }
 
 @media (max-width: 900px) {

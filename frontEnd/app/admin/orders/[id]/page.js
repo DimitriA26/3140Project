@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import styles from "./page.module.css";
+import AdminRoute from "@/components/AdminRoute";
 import {
   getOrderById,
   updateOrderStatus,
@@ -12,7 +13,7 @@ import {
 
 const STATUS_OPTIONS = ["pending", "confirmed", "shipped", "delivered"];
 
-export default function AdminOrderDetailPage() {
+function AdminOrderDetailContent() {
   const { id } = useParams();
 
   const [order, setOrder] = useState(null);
@@ -235,5 +236,13 @@ export default function AdminOrderDetailPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function AdminOrderDetailPage() {
+  return (
+    <AdminRoute>
+      <AdminOrderDetailContent />
+    </AdminRoute>
   );
 }

@@ -1,32 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function AdminProductsPage() {
-  const [products] = useState([
-    {
-      id: "PROD001",
-      name: "Sample Laptop",
-      category: "Electronics",
-      price: 899.99,
-      inventory: 12,
-    },
-    {
-      id: "PROD002",
-      name: "College Backpack",
-      category: "Backpacks",
-      price: 49.99,
-      inventory: 25,
-    },
-    {
-      id: "PROD003",
-      name: "Notebook Set",
-      category: "Office Supplies",
-      price: 14.99,
-      inventory: 0,
-    },
-  ]);
+import AdminRoute from "@/components/AdminRoute";
+import { formatCurrency } from "@/lib/formatCurrency";
+import { getProducts, deleteProduct } from "@/services/productService";
+
+function AdminProductsContent() {
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  async function loadProducts() {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const data = await getProducts({ limit: 50 });
+      setProducts(data.products);
+    } catch (err) {
+      setError(err.message || "Could not load products.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  async function handleDelete(product) {
+    if (!window.confirm(`Delete "${product.name}"? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await deleteProduct(product.id);
+      setProducts((current) => current.filter((p) => p.id !== product.id));
+    } catch (err) {
+      window.alert(err.message || "Could not delete this product.");
+    }
+  }
 
   return (
     <main style={styles.page}>
@@ -45,81 +60,90 @@ export default function AdminProductsPage() {
           </Link>
         </div>
 
-        <div style={styles.tableCard}>
-          <div style={styles.tableWrapper}>
-            <table style={styles.table}>
-              <thead>
-                <tr>
-                  <th style={styles.th}>Product</th>
-                  <th style={styles.th}>Category</th>
-                  <th style={styles.th}>Price</th>
-                  <th style={styles.th}>Inventory</th>
-                  <th style={styles.th}>Status</th>
-                  <th style={styles.th}>Actions</th>
-                </tr>
-              </thead>
+        {error && <p style={styles.error}>{error}</p>}
 
-              <tbody>
-                {products.map((product) => (
-                  <tr key={product.id}>
-                    <td style={styles.td}>
-                      <strong>{product.name}</strong>
-                      <div style={styles.productId}>{product.id}</div>
-                    </td>
+        {isLoading ? (
+          <p style={styles.message}>Loading products...</p>
+        ) : (
+          <div style={styles.tableCard}>
+            <div style={styles.tableWrapper}>
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>Product</th>
+                    <th style={styles.th}>Category</th>
+                    <th style={styles.th}>Price</th>
+                    <th style={styles.th}>Inventory</th>
+                    <th style={styles.th}>Status</th>
+                    <th style={styles.th}>Actions</th>
+                  </tr>
+                </thead>
 
-                    <td style={styles.td}>{product.category}</td>
+                <tbody>
+                  {products.map((product) => (
+                    <tr key={product.id}>
+                      <td style={styles.td}>
+                        <strong>{product.name}</strong>
+                        <div style={styles.productId}>#{product.id}</div>
+                      </td>
 
-                    <td style={styles.td}>${product.price.toFixed(2)}</td>
+                      <td style={styles.td}>{product.category_name}</td>
 
-                    <td style={styles.td}>{product.inventory}</td>
+                      <td style={styles.td}>{formatCurrency(product.price)}</td>
 
-                    <td style={styles.td}>
-                      <span
-                        style={
-                          product.inventory > 0
-                            ? styles.inStock
-                            : styles.outOfStock
-                        }
-                      >
-                        {product.inventory > 0 ? "In stock" : "Out of stock"}
-                      </span>
-                    </td>
+                      <td style={styles.td}>{product.inventory}</td>
 
-                    <td style={styles.td}>
-                      <div style={styles.actions}>
-                        <Link
-                          href={`/admin/products/${product.id}/edit`}
-                          style={styles.editLink}
-                        >
-                          Edit
-                        </Link>
-
-                        <button
-                          type="button"
-                          style={styles.deleteButton}
-                          onClick={() =>
-                            window.alert(
-                              `Delete action for ${product.name} will be connected to the backend later.`
-                            )
+                      <td style={styles.td}>
+                        <span
+                          style={
+                            product.inventory > 0
+                              ? styles.inStock
+                              : styles.outOfStock
                           }
                         >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                          {product.inventory > 0 ? "In stock" : "Out of stock"}
+                        </span>
+                      </td>
 
-        <p style={styles.note}>
-          Product data is temporary frontend data until the admin product API is
-          connected.
-        </p>
+                      <td style={styles.td}>
+                        <div style={styles.actions}>
+                          <Link
+                            href={`/admin/products/${product.id}/edit`}
+                            style={styles.editLink}
+                          >
+                            Edit
+                          </Link>
+
+                          <button
+                            type="button"
+                            style={styles.deleteButton}
+                            onClick={() => handleDelete(product)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {products.length === 0 && (
+              <p style={styles.message}>No products yet.</p>
+            )}
+          </div>
+        )}
       </section>
     </main>
+  );
+}
+
+export default function AdminProductsPage() {
+  return (
+    <AdminRoute>
+      <AdminProductsContent />
+    </AdminRoute>
   );
 }
 
@@ -172,6 +196,16 @@ const styles = {
     color: "#ffffff",
     textDecoration: "none",
     fontWeight: "600",
+  },
+
+  message: {
+    color: "#6b7280",
+    padding: "24px",
+  },
+
+  error: {
+    color: "#b91c1c",
+    marginBottom: "16px",
   },
 
   tableCard: {
@@ -255,11 +289,5 @@ const styles = {
     fontWeight: "600",
     cursor: "pointer",
     padding: 0,
-  },
-
-  note: {
-    marginTop: "20px",
-    color: "#6b7280",
-    fontSize: "14px",
   },
 };

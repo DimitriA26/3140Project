@@ -7,6 +7,16 @@ const SORT_OPTIONS = {
   "name-desc": "p.name DESC",
 };
 
+// GET /api/products/categories
+async function getCategories(req, res, next) {
+  try {
+    const result = await pool.query("SELECT * FROM categories ORDER BY name");
+    res.json({ categories: result.rows });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // GET /api/products
 async function getAllProducts(req, res, next) {
   try {
@@ -189,6 +199,7 @@ async function deleteProduct(req, res, next) {
 }
 
 module.exports = {
+  getCategories,
   getAllProducts,
   getProductById,
   createProduct,

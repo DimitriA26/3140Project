@@ -96,7 +96,7 @@ export default function AccountMenu({ iconClassName }) {
               My account
             </Link>
 
-            <Link href="/orders" role="menuitem" onClick={() => setOpen(false)}>
+            <Link href="/order-history" role="menuitem" onClick={() => setOpen(false)}>
               <Package size={16} strokeWidth={1.8} />
               Order history
             </Link>

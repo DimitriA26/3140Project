@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+  getCategories,
   getAllProducts,
   getProductById,
   createProduct,
@@ -11,6 +12,7 @@ const { requireAuth, requireAdmin } = require("../middleware/auth");
 
 // Public
 router.get("/", getAllProducts);
+router.get("/categories", getCategories);
 router.get("/:id", getProductById);
 
 // Admin only

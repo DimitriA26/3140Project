@@ -1,20 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export default function NewProductPage() {
+import AdminRoute from "@/components/AdminRoute";
+import { createProduct, getCategories } from "@/services/productService";
+
+function NewProductContent() {
+  const router = useRouter();
+
+  const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    category: "",
+    category_id: "",
     price: "",
     inventory: "",
     imageUrl: "",
   });
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    getCategories()
+      .then(setCategories)
+      .catch(() => setCategories([]));
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -25,15 +38,14 @@ export default function NewProductPage() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setError("");
-    setSuccess("");
 
     if (
       !formData.name ||
       !formData.description ||
-      !formData.category ||
+      !formData.category_id ||
       !formData.price ||
       !formData.inventory
     ) {
@@ -58,10 +70,23 @@ export default function NewProductPage() {
       return;
     }
 
-    // Backend product creation will be connected later.
-    console.log("Product submitted:", formData);
+    setIsSubmitting(true);
 
-    setSuccess("Product form is valid and ready to be submitted.");
+    try {
+      await createProduct({
+        name: formData.name,
+        description: formData.description,
+        category_id: Number(formData.category_id),
+        price,
+        inventory,
+        image_url: formData.imageUrl || null,
+      });
+
+      router.push("/admin/products");
+    } catch (err) {
+      setError(err.message || "Could not create this product.");
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -122,16 +147,17 @@ export default function NewProductPage() {
 
               <select
                 id="category"
-                name="category"
-                value={formData.category}
+                name="category_id"
+                value={formData.category_id}
                 onChange={handleChange}
                 style={styles.input}
               >
                 <option value="">Select category</option>
-                <option value="Textbooks">Textbooks</option>
-                <option value="Office Supplies">Office Supplies</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Backpacks">Backpacks</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -190,12 +216,11 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {error && <p style={styles.error}>{error}</p>}
-          {success && <p style={styles.success}>{success}</p>}
+          {error && <p style={styles.error} role="alert">{error}</p>}
 
           <div style={styles.actions}>
-            <button type="submit" style={styles.primaryButton}>
-              Add product
+            <button type="submit" style={styles.primaryButton} disabled={isSubmitting}>
+              {isSubmitting ? "Adding..." : "Add product"}
             </button>
 
             <Link href="/admin/products" style={styles.cancelButton}>
@@ -203,13 +228,16 @@ export default function NewProductPage() {
             </Link>
           </div>
         </form>
-
-        <p style={styles.note}>
-          Product creation will be connected to the admin product API once the
-          backend is available.
-        </p>
       </section>
     </main>
+  );
+}
+
+export default function NewProductPage() {
+  return (
+    <AdminRoute>
+      <NewProductContent />
+    </AdminRoute>
   );
 }
 
@@ -309,12 +337,6 @@ const styles = {
     margin: "0 0 20px",
   },
 
-  success: {
-    color: "#047857",
-    fontSize: "14px",
-    margin: "0 0 20px",
-  },
-
   actions: {
     display: "flex",
     alignItems: "center",
@@ -338,9 +360,4 @@ const styles = {
     fontWeight: "600",
   },
 
-  note: {
-    marginTop: "20px",
-    color: "#6b7280",
-    fontSize: "14px",
-  },
 };
