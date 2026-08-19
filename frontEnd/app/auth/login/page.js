@@ -2,14 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { signIn } = useAuth();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -20,7 +27,7 @@ export default function LoginPage() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setError("");
 
@@ -29,8 +36,16 @@ export default function LoginPage() {
       return;
     }
 
-    // Backend authentication will be connected later.
-    console.log("Login submitted:", formData);
+    setIsSubmitting(true);
+
+    try {
+      await signIn({ email: formData.email, password: formData.password });
+      router.push("/");
+    } catch (err) {
+      setError(err.message || "Unable to sign in. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -79,10 +94,10 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <p style={styles.error}>{error}</p>}
+          {error && <p style={styles.error} role="alert">{error}</p>}
 
-          <button type="submit" style={styles.button}>
-            Sign in
+          <button type="submit" style={styles.button} disabled={isSubmitting}>
+            {isSubmitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
 

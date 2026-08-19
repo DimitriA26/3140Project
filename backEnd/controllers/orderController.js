@@ -67,7 +67,13 @@ async function getOrderById(req, res, next) {
   try {
     const { id } = req.params;
 
-    const orderResult = await pool.query("SELECT * FROM orders WHERE id = $1", [id]);
+    const orderResult = await pool.query(
+      `SELECT orders.*, users.name AS customer_name, users.email AS customer_email
+       FROM orders
+       JOIN users ON users.id = orders.user_id
+       WHERE orders.id = $1`,
+      [id]
+    );
     const order = orderResult.rows[0];
 
     if (!order) {

@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/context/AuthContext";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { signUp } = useAuth();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,6 +18,7 @@ export default function RegisterPage() {
   });
 
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -22,7 +29,7 @@ export default function RegisterPage() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setError("");
 
@@ -41,11 +48,20 @@ export default function RegisterPage() {
       return;
     }
 
-    // Backend registration will be connected later.
-    console.log("Registration submitted:", {
-      name: formData.name,
-      email: formData.email,
-    });
+    setIsSubmitting(true);
+
+    try {
+      await signUp({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      router.push("/");
+    } catch (err) {
+      setError(err.message || "Unable to create your account. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -130,10 +146,10 @@ export default function RegisterPage() {
             />
           </div>
 
-          {error && <p style={styles.error}>{error}</p>}
+          {error && <p style={styles.error} role="alert">{error}</p>}
 
-          <button type="submit" style={styles.button}>
-            Create account
+          <button type="submit" style={styles.button} disabled={isSubmitting}>
+            {isSubmitting ? "Creating account..." : "Create account"}
           </button>
         </form>
 

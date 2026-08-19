@@ -4,24 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import styles from "./page.module.css";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { getMyOrders, getOrderById } from "@/services/orderService";
 
-
-// Backend API
-const API_URL = "http://localhost:4000";
-
-
-// Temporary user for development/testing.
-//
-// The seed-data branch creates:
-// CID001
-// CID002
-//
-// This will eventually be replaced with the
-// currently authenticated user's ID.
-const USER_ID = "CID001";
-
-
-export default function OrderHistoryPage() {
+function OrderHistoryContent() {
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -37,21 +23,18 @@ export default function OrderHistoryPage() {
                 setLoading(true);
                 setError("");
 
-                const response = await fetch(
-                    `${API_URL}/orders/${USER_ID}`
+                const summaries = await getMyOrders();
+
+                // The list endpoint doesn't include line items, so fetch each
+                // order's detail (owner-only, enforced by the backend) in parallel.
+                const withItems = await Promise.all(
+                    summaries.map(async (order) => {
+                        const detail = await getOrderById(order.id);
+                        return { ...detail.order, items: detail.items };
+                    })
                 );
 
-
-                if (!response.ok) {
-                    throw new Error(
-                        "Failed to retrieve order history."
-                    );
-                }
-
-
-                const data = await response.json();
-
-                setOrders(data);
+                setOrders(withItems);
 
             } catch (error) {
 
@@ -196,7 +179,7 @@ export default function OrderHistoryPage() {
 
                             <div
                                 className={styles.orderCard}
-                                key={order.orderID}
+                                key={order.id}
                             >
 
                                 {/* ORDER HEADER */}
@@ -210,7 +193,7 @@ export default function OrderHistoryPage() {
                                         </p>
 
                                         <h2>
-                                            #{order.orderID}
+                                            #{order.id}
                                         </h2>
 
                                     </div>
@@ -229,11 +212,11 @@ export default function OrderHistoryPage() {
                                         <span
                                             className={`${styles.status} ${
                                                 getStatusClass(
-                                                    order.order_status
+                                                    order.status
                                                 )
                                             }`}
                                         >
-                                            {order.order_status}
+                                            {order.status}
                                         </span>
 
                                     </div>
@@ -255,7 +238,7 @@ export default function OrderHistoryPage() {
 
                                         <div
                                             className={styles.item}
-                                            key={`${item.productID}-${index}`}
+                                            key={`${item.name}-${index}`}
                                         >
 
                                             <div className={styles.itemInfo}>
@@ -263,8 +246,7 @@ export default function OrderHistoryPage() {
                                                 <span className={
                                                     styles.productName
                                                 }>
-                                                    {item.product_name ||
-                                                        item.productID}
+                                                    {item.name}
                                                 </span>
 
                                                 <span className={
@@ -325,6 +307,15 @@ export default function OrderHistoryPage() {
 }
 
 
+export default function OrderHistoryPage() {
+    return (
+        <ProtectedRoute>
+            <OrderHistoryContent />
+        </ProtectedRoute>
+    );
+}
+
+
 /*
  * Format database date for display.
  */
@@ -373,17 +364,17 @@ function getStatusClass(status) {
 
     switch (status) {
 
-        case "Shipped":
+        case "shipped":
             return styles.shipped;
 
-        case "Pending":
+        case "delivered":
+            return styles.shipped;
+
+        case "pending":
             return styles.pending;
 
-        case "Processing":
+        case "confirmed":
             return styles.processing;
-
-        case "Cancelled":
-            return styles.cancelled;
 
         default:
             return styles.defaultStatus;

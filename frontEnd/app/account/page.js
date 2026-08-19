@@ -1,6 +1,20 @@
-import Link from "next/link";
+"use client";
 
-export default function AccountPage() {
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/context/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
+
+function AccountContent() {
+  const router = useRouter();
+  const { currentUser, signOut } = useAuth();
+
+  function handleSignOut() {
+    signOut();
+    router.push("/");
+  }
+
   return (
     <main style={styles.page}>
       <section style={styles.container}>
@@ -21,12 +35,17 @@ export default function AccountPage() {
 
             <div style={styles.profileRow}>
               <span style={styles.label}>Name</span>
-              <span>Customer Name</span>
+              <span>{currentUser.name}</span>
             </div>
 
             <div style={styles.profileRow}>
               <span style={styles.label}>Email</span>
-              <span>customer@example.com</span>
+              <span>{currentUser.email}</span>
+            </div>
+
+            <div style={styles.profileRow}>
+              <span style={styles.label}>Role</span>
+              <span>{currentUser.role}</span>
             </div>
           </article>
 
@@ -36,7 +55,7 @@ export default function AccountPage() {
               Review your recent purchases and order status.
             </p>
 
-            <Link href="/orders" style={styles.button}>
+            <Link href="/order-history" style={styles.button}>
               View order history
             </Link>
           </article>
@@ -47,17 +66,20 @@ export default function AccountPage() {
             Continue shopping
           </Link>
 
-          <Link href="/auth/login" style={styles.signOut}>
+          <button type="button" onClick={handleSignOut} style={styles.signOut}>
             Sign out
-          </Link>
+          </button>
         </div>
-
-        <p style={styles.note}>
-          Account information will be connected to authenticated user data once
-          the backend authentication service is available.
-        </p>
       </section>
     </main>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <ProtectedRoute>
+      <AccountContent />
+    </ProtectedRoute>
   );
 }
 
@@ -165,11 +187,10 @@ const styles = {
     color: "#6b7280",
     textDecoration: "none",
     fontWeight: "600",
-  },
-
-  note: {
-    marginTop: "28px",
-    color: "#6b7280",
-    fontSize: "14px",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "16px",
+    padding: 0,
   },
 };
