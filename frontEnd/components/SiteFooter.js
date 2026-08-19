@@ -34,7 +34,7 @@ export default function SiteFooter() {
               <h2>Account</h2>
               <Link href="/auth/login">Sign in</Link>
               <Link href="/auth/register">Create account</Link>
-              <Link href="/orders">Orders</Link>
+              <Link href="/order-history">Orders</Link>
               <Link href="/account">Profile</Link>
             </div>
 
