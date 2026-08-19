@@ -1,0 +1,32 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgb(180 35 24 / 20%);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+}
+
+.message {
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 520;
+}
+
+.retry {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--danger);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 560;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+.retry:hover {
+  opacity: 0.88;
+}

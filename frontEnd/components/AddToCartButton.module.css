@@ -1,0 +1,37 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 20px;
+  border-radius: var(--radius-full);
+  background: var(--brand);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 560;
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    transform var(--transition),
+    opacity var(--transition);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--brand-hover);
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.button:disabled {
+  background: var(--border-strong);
+  color: var(--foreground-muted);
+  cursor: not-allowed;
+}
+
+.added,
+.added:hover:not(:disabled) {
+  background: var(--success);
+}

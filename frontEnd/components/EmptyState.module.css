@@ -1,0 +1,48 @@
+.empty {
+  padding: 56px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  text-align: center;
+}
+
+.title {
+  font-size: 19px;
+  font-weight: 620;
+  letter-spacing: -0.01em;
+}
+
+.description {
+  max-width: 42ch;
+  color: var(--foreground-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.action {
+  margin-top: 8px;
+}
+
+.action :global(a),
+.action :global(button) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: var(--radius-full);
+  background: var(--brand);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 560;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.action :global(a):hover,
+.action :global(button):hover {
+  background: var(--brand-hover);
+}
